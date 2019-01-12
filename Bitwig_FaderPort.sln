@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FaderPort", "FaderPort", "{
 	ProjectSection(SolutionItems) = preProject
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		controller-shortcuts\Faderport.bwcontrollermap = controller-shortcuts\Faderport.bwcontrollermap
 		FADERPORT.control.js = FADERPORT.control.js
 		mcu_display.js = mcu_display.js
 		mcu_encoders.js = mcu_encoders.js

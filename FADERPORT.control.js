@@ -6,7 +6,7 @@ load("mcu_var.js");
 host.defineController("PreSonus", "FaderPort", "1.0", "e8d7b358-a945-4002-b9f4-50860877ec0c");
 host.defineMidiPorts(1, 1);
 host.addDeviceNameBasedDiscoveryPair(["FaderPort"],["FaderPort"]);
-//host.addDeviceNameBasedDiscoveryPair(["Mackie MCU PRO MIDI 1"],["Mackie MCU PRO MIDI 1"]);
+host.addDeviceNameBasedDiscoveryPair(["FaderPort MIDI 1"],["FaderPort MIDI 1"]);
 
 var isShiftPressed = false;
 var isResetPressed = false;
@@ -52,7 +52,7 @@ function init()
 	clearLCD();
 	writeToLCD(0, 0, "     ***  init Bitwig Studio Open API 1.0  ***", TOTAL_DISPLAY_SIZE);
 
-	//host.getMidiInPort(0).setMidiCallback(onMidi);
+	host.getMidiInPort(0).setMidiCallback(onMidi);
 
 	// //////////////////////////////////////////////////////////////////////*Host*/
 	application = host.createApplicationSection();
@@ -374,7 +374,7 @@ function onMidi(status, data1, data2)
 {
 	//printMidi(status, data1, data2);
 
-    host.println("status: " + status + " data1: " + data1 + " data2: " + data2);
+    //host.println("status: " + status + " data1: " + data1 + " data2: " + data2);
 	if (isPitchBend(status)) ////////only the motor faders send/receive pitch bend messages(14bit --> 0 - 16383)
 	{
 		var index = MIDIChannel(status);
@@ -711,7 +711,7 @@ function onMidi(status, data1, data2)
                     break;
                 case APPLICATION.REPLACE_DEVICE:
                    
-                     cursorDevice.replaceDeviceInsertionPoint().browse();
+                     //cursorDevice.replaceDeviceInsertionPoint().browse();
                     break;
 				case TOGGLE_VU_METER:
 					switchVuMode(activeVuMode + 1);
