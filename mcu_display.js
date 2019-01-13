@@ -60,7 +60,7 @@ function writeToColumn(display_page, row, column, text)
 		writeToLCD(row, 7 * column, text, 7);
 	}
 
-	displayPages[display_page].writeToColumnBuffer(row, column, text);
+	//displayPages[display_page].writeToColumnBuffer(row, column, text);
 }
 
 function writeToDisplay(display_page, row, position, text, len)

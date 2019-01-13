@@ -33,7 +33,7 @@ var punchIO = Punch.OFF;
 var parameterPageBuffer = 0;
 var selectedTrack = 0;
 var isTempoDisplayActive = true;
-var numSendPages = 5;
+var numSendPages = 8;
 var numDevicePages = 2;
 var tempo = "110";
 var returnToArrangement = MODIFIER.CONTROL;
@@ -43,6 +43,10 @@ var encoderPages = [new EncoderPage(0),new EncoderPage(1),new EncoderPage(2),new
 
 var automationWrite = false;
 var automationWriteMode = "";
+
+var sendMode = false;
+
+var sendValueArray = new Array(999);
 
 
 var panelLayout = ["ARRANGE", "EDIT", "MIX"];
@@ -173,65 +177,90 @@ function init()
 		}));
 		track.getPan().setLabel("P" + (t + 1));
 
-		track.getSend(0).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
-		{
-			encoderPages[VPOT_PAGE.SEND0].setEncoder(index, value, 0, 0);
-		}));
-		track.getSend(0).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
-		{
-			writeToColumn(DISPLAY_PAGES.NAME_AND_SEND0, 1, index, value);
-		}));
-		track.getSend(1).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
-		{
-			encoderPages[VPOT_PAGE.SEND1].setEncoder(index, value, 0, 0);
-		}));
-		track.getSend(1).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
-		{
-			writeToColumn(DISPLAY_PAGES.NAME_AND_SEND1, 1, index, value);
-		}));
-		track.getSend(2).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
-		{
-			encoderPages[VPOT_PAGE.SEND2].setEncoder(index, value, 0, 0);
-		}));
-		track.getSend(2).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
-		{
-			writeToColumn(DISPLAY_PAGES.NAME_AND_SEND2, 1, index, value);
-		}));
-		track.getSend(3).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
-		{
-			encoderPages[VPOT_PAGE.SEND3].setEncoder(index, value, 0, 0);
-		}));
-		track.getSend(3).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
-		{
-			writeToColumn(DISPLAY_PAGES.NAME_AND_SEND3, 1, index, value);
-		}));
+		//track.getSend(0).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
+		//{
+		//	encoderPages[VPOT_PAGE.SEND0].setEncoder(index, value, 0, 0);
+		//}));
+		//track.getSend(0).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
+		//{
+		//	writeToColumn(DISPLAY_PAGES.NAME_AND_SEND0, 1, index, value);
+		//}));
+		//track.getSend(1).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
+		//{
+		//	encoderPages[VPOT_PAGE.SEND1].setEncoder(index, value, 0, 0);
+		//}));
+		//track.getSend(1).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
+		//{
+		//	writeToColumn(DISPLAY_PAGES.NAME_AND_SEND1, 1, index, value);
+		//}));
+		//track.getSend(2).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
+		//{
+		//	encoderPages[VPOT_PAGE.SEND2].setEncoder(index, value, 0, 0);
+		//}));
+		//track.getSend(2).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
+		//{
+		//	writeToColumn(DISPLAY_PAGES.NAME_AND_SEND2, 1, index, value);
+		//}));
+		//track.getSend(3).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
+		//{
+		//	encoderPages[VPOT_PAGE.SEND3].setEncoder(index, value, 0, 0);
+		//}));
+		//track.getSend(3).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
+		//{
+		//	writeToColumn(DISPLAY_PAGES.NAME_AND_SEND3, 1, index, value);
+		//}));
 
-		track.getSend(4).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
-		{
-			encoderPages[VPOT_PAGE.SEND4].setEncoder(index, value, 0, 0);
-		}));
-		track.getSend(4).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
-		{
-			writeToColumn(DISPLAY_PAGES.NAME_AND_SEND4, 1, index, value);
-		}));
+		//track.getSend(4).addValueObserver(16384, makeIndexedFunction(t, function(index, value)
+		//{
+		//	encoderPages[VPOT_PAGE.SEND4].setEncoder(index, value, 0, 0);
+		//}));
+		//track.getSend(4).addValueDisplayObserver(6, "", makeIndexedFunction(t, function(index, value)
+		//{
+		//	writeToColumn(DISPLAY_PAGES.NAME_AND_SEND4, 1, index, value);
+		//}));
 
-		// for ( var s = 0; s < numSendPages; s++) /////////////////////////////////////not working??
-		// {
-		// v_page = VPOT_PAGE.SEND0 + s;
-		// d_page = DISPLAY_PAGES.NAME_AND_SEND0 + s;
-		// track.getSend(s).setLabel("S" + (t + 1));
-		// 
-		// track.getSend(s).addValueObserver(16384, makeIndexedFunction(t,
-		// function(index, value)
-		// {
-		// encoderPages[v_page].setEncoder(index, value, 0, 0);
-		// }));
-		// track.getSend(s).addValueDisplayObserver(6, "", makeIndexedFunction(t,
-		// function(index, value)
-		// {
-		// writeToColumn(d_page, 1, index, value);
-		// }));
-		// }//////////////////////////////////////////////////////////////////////////////////////////////
+		 for ( var s = 0; s < numSendPages; s++) /////////////////////////////////////not working??
+		 {
+		 //v_page = VPOT_PAGE.SEND0 + s;
+		 //d_page = DISPLAY_PAGES.NAME_AND_SEND0 + s;
+             //track.getSend(s).setLabel("S" + (t + 1));
+             //host.println("test 5:" + t);
+             //makeSendValue(t, s, 0);
+		 track.getSend(s).addValueObserver(16384, makeIndexedFunction(s,
+		 function(index, value)
+         {
+             makeSendValue(selectedTrack, index, value);
+             for (encoderi = 0; encoderi < numSendPages; encoderi++) {
+                
+
+                 //encoderPages[VPOT_PAGE.SEND0].setEncoder(index, value, 0, 0);
+
+
+                 encoderPages[VPOT_PAGE.SEND0].valueBuffer[encoderi] = sendValueArray[selectedTrack][encoderi];
+                 //encoderPages[VPOT_PAGE.SEND0].sendValueToFader(index);
+                 
+                 //host.println("test 7:" + encoderPages[VPOT_PAGE.SEND0].valueBuffer);
+             }
+
+             encoderPages[VPOT_PAGE.SEND0].sendAllValuesToFaders();
+             //if (sendMode) {
+             //    host.println(value);
+             //    sendValueArray[t][s] = value;
+             //    encoderPages[VPOT_PAGE.SEND0].valueBuffer[st] = value
+
+             //}
+		 }));
+		 //track.getSend(s).addValueDisplayObserver(6, "", makeIndexedFunction(t,
+		 //function(index, value)
+		 //{
+		 //writeToColumn(d_page, 1, index, value);
+		 //}));
+
+
+           
+        }//////////////////////////////////////////////////////////////////////////////////////////////
+
+       
 
 		track.addIsSelectedObserver(makeIndexedFunction(t, function(index, isSelected)
 		{
@@ -239,7 +268,23 @@ function init()
 			{
 				sendNoteOn(0, CHANNEL_BUTTON.SELECT0 + index, 127);
 				setTrackSelected(index);
-				if (mcuActiveDisplayPage == DISPLAY_PAGES.NAME_AND_VOLUME || mcuActiveDisplayPage == DISPLAY_PAGES.NAME_AND_PAN) setPageDisplay(index);
+                if (mcuActiveDisplayPage == DISPLAY_PAGES.NAME_AND_VOLUME || mcuActiveDisplayPage == DISPLAY_PAGES.NAME_AND_PAN) setPageDisplay(index);
+                //host.println("track change");
+
+                if (sendMode) {
+                    for (var st = 0; st < numSendPages; st++) {
+                        //trackBank.getTrack(this.selectedTrack).getSend(st);
+
+
+                        encoderPages[VPOT_PAGE.SEND0].valueBuffer[st] = sendValueArray[index][st];
+                           
+                        
+
+                        
+                    }
+                    encoderPages[VPOT_PAGE.SEND0].sendAllValuesToFaders();
+                }
+                
 			}
 			else sendNoteOn(0, CHANNEL_BUTTON.SELECT0 + index, 0);
 		}));
@@ -374,13 +419,15 @@ function onMidi(status, data1, data2)
 {
 	//printMidi(status, data1, data2);
 
-    //host.println("status: " + status + " data1: " + data1 + " data2: " + data2);
+   //    host.println("status: " + status + " data1: " + data1 + " data2: " + data2);
 	if (isPitchBend(status)) ////////only the motor faders send/receive pitch bend messages(14bit --> 0 - 16383)
 	{
 		var index = MIDIChannel(status);
 		if (index < 8)
-		{
-			getFaderObjectPath(index).set(pitchBendValue(data1, data2), 16384 - 127);
+        {
+            //host.println("Test 9:" + index);
+            getFaderObjectPath(index).set(pitchBendValue(data1, data2), 16384 - 127);
+            makeSendValue(this.selectedTrack,index, pitchBendValue(data1, data2));
 		}
 		if (index == 8) 
 		{
@@ -417,12 +464,13 @@ function onMidi(status, data1, data2)
 
 			else isVpotPressed[data1 - VPOT_CLICK0] = data2 > 0; // as long as an encoder is clicked (and reset is not) the range is set to fine tune
 		}
-
+        
 		if (data2 > 0) // Check button presses (but not releases) in here
 		{
 
 			if (data1 >= VPOT_ASSIGN.TRACK && data1 <= VPOT_ASSIGN.INSTRUMENT) //  the 4 mode buttons change the vpot assignement and what's displayed 
-			{
+            {
+                sendMode = false;
 				switch (data1)
 				{
 					case VPOT_ASSIGN.TRACK:
@@ -440,7 +488,17 @@ function onMidi(status, data1, data2)
 
 						}
 						break;
-					case VPOT_ASSIGN.SEND:
+                    case VPOT_ASSIGN.SEND:
+                        sendMode = true;
+                     
+                    //for (var st = 0; st < numSendPages; st++) {
+                    //    //trackBank.getTrack(this.selectedTrack).getSend(st);
+                    //    host.println(this.selectedTrack);
+                    //    encoderPages[VPOT_PAGE.SEND0].valueBuffer[st] = sendValueArray[this.selectedTrack][st];
+                    //}
+                    ////encoderPages[VPOT_PAGE.SEND0].sendAllValuesToFaders();
+                
+
 						if (mcuActiveEncoderPage == activeSendPage) // if already in send mode, switch the send page
 						{
 							switchActiveSendPage();
@@ -596,11 +654,12 @@ function onMidi(status, data1, data2)
 				}
 				else if ((mcuActiveEncoderPage >= VPOT_PAGE.SEND0 && mcuActiveEncoderPage <= VPOT_PAGE.SEND4) && index < numSendPages) //select send page
 				{
-					activeSendPage = index + 4;
-					setPageDisplay(activeSendPage - 4);
-					setEncoderPage(activeSendPage);
-					setDisplayPage(activeSendPage);
-					setIndications("send");
+					//activeSendPage = index + 4;
+					//setPageDisplay(activeSendPage - 4);
+					//setEncoderPage(activeSendPage);
+					//setDisplayPage(activeSendPage);
+                    //setIndications("send");
+                    //host.println("test 1");
 				}
 			}
 
@@ -779,18 +838,21 @@ function onMidi(status, data1, data2)
 
 		/* vpots */
 		if (data1 >= VPOT0 && data1 < (VPOT0 + 8)) // if the cc comes from a vpot..
-		{
+        {
+            //host.println("test 10");
 			isFlipOn ? trackBank.getTrack(index).getVolume().inc(delta, relativeRange) : getEncoderObjectPath(index).inc(delta, relativeRange); // ..get the target parameter dependent on the active encoder page and if flip is on or off
 		}
 		else if (data1 == TRANSPORT.WHEEL) // increasePosition didn't work (trunk 2740). for now the wheel changes the tempo
 		{
 			if (isShiftPressed)
          {
-            transport.increaseTempo(delta, isScrubPressed ? 6461 : 1293); // relativeRange: 647 = full, 1293 = half, 3231 = 1/5, 6461 = 1/10 bpm steps
+                transport.increaseTempo(delta, isScrubPressed ? 6461 : 1293); // relativeRange: 647 = full, 1293 = half, 3231 = 1/5, 6461 = 1/10 bpm steps
+                //host.println("test 11");
          }
          else
          {
-            transport.incPosition(delta, true);
+                transport.incPosition(delta, true);
+                //host.println("test 12");
          }
 		}
 	}
@@ -884,6 +946,7 @@ function getFaderObjectPath(index) // for now this is mainly used for the flip
 				return cursorDevice.getParameter(index);
 				break;
             case VPOT_PAGE.SEND0:
+                //host.println("test 6:" + this.selectedTrack);
                 return trackBank.getTrack(this.selectedTrack).getSend(index);
 				break;
 			//case VPOT_PAGE.SEND1:
@@ -916,7 +979,8 @@ function toggleFlip() // toggle flip on/off and send all values to all vpots and
 		case false:
 			isFlipOn = true;
 			sendNoteOn(0, FADER_BANKS.FLIP, 127);
-			encoderPages[mcuActiveEncoderPage].sendAllValuesToFaders();
+            encoderPages[mcuActiveEncoderPage].sendAllValuesToFaders();
+            //host.println("test 8:" + mcuActiveEncoderPage);
 			encoderPages[VPOT_PAGE.VOLUME].sendAllValuesToVpots();
 			break;
 	}
@@ -934,9 +998,10 @@ function setAutomationModeLED(mode)
 }
 function switchActiveSendPage() // when the active encoder page is 'send' and the send mode button is pressed 
 {
-	if (activeSendPage < numSendPages + 3)
-		activeSendPage += 1;
-	else activeSendPage = VPOT_PAGE.SEND0;
+	//if (activeSendPage < numSendPages + 3)
+	//	activeSendPage += 1;
+    //else activeSendPage = VPOT_PAGE.SEND0;
+    activeSendPage = VPOT_PAGE.SEND0;
 }
 
 function switchActiveDevicePage()
@@ -972,21 +1037,21 @@ function setIndications(page) // sets the color indication in the application de
 			}
 			break;
 		case "send":
-			for ( var i = 0; i < 8; i++)
-			{
-				var track = trackBank.getTrack(i);
-				var parameter = cursorDevice.getParameter(i);
+			//for ( var i = 0; i < 8; i++)
+			//{
+			//	var track = trackBank.getTrack(i);
+			//	var parameter = cursorDevice.getParameter(i);
 
-				// track.getVolume().setIndication(true);
-				track.getPan().setIndication(false);
-				parameter.setIndication(false);
+			//	// track.getVolume().setIndication(true);
+			//	track.getPan().setIndication(false);
+			//	parameter.setIndication(false);
 
-				for ( var s = 0; s < numSendPages; s++)
-				{
-					track.getSend(s).setIndication(false);
-				}
-				track.getSend(activeSendPage - 4).setIndication(true);
-			}
+			//	for ( var s = 0; s < numSendPages; s++)
+			//	{
+			//		track.getSend(s).setIndication(false);
+			//	}
+			//	track.getSend(activeSendPage - 4).setIndication(true);
+			//}
 			break;
 		case "device":
 			for ( var i = 0; i < 8; i++)
@@ -1021,4 +1086,13 @@ function setTempo(t) // stores the current tempo from the tempo observer
 function getTempoValue() // returns the stored tempo so it can be displayed on the last 3 digits of the transport display
 {
 	return tempo;
+}
+
+function makeSendValue(trackIndex, sendIndex, value)
+{
+    //host.println("test 4:" + trackIndex);
+    if (sendValueArray[trackIndex] == undefined) { sendValueArray[trackIndex] = new Array(99);}
+    //host.println("test 3");
+    sendValueArray[trackIndex][sendIndex] = value;
+        
 }

@@ -27,7 +27,8 @@ EncoderPage.prototype.sendAllValuesToVpots = function()
 };
 EncoderPage.prototype.sendValueToFader = function(index)
 {
-	sendPitchBend(index, this.valueBuffer[index]);
+    sendPitchBend(index, this.valueBuffer[index]);
+    //host.println("send this value to fader " + index + " : " + this.valueBuffer[index]);
 };
 
 EncoderPage.prototype.sendAllValuesToFaders = function()
@@ -40,7 +41,8 @@ EncoderPage.prototype.sendAllValuesToFaders = function()
 
 EncoderPage.prototype.setEncoder = function(index, value, mode, indicator)
 {
-	this.valueBuffer[index] = value;
+    this.valueBuffer[index] = value;
+    //host.println("ValueBuffer index:" + index + " mcuactiveencoderpage:" + mcuActiveEncoderPage + " pageindex " + this.pageIndex);
 	t = Math.round(this.valueBuffer[index] * (10 / 16384)) + 1 | (mode << 4) | (indicator << 6);
 	this.ledBuffer[index] = t;
 
